@@ -5,9 +5,20 @@ import Banner from '../components/banner';
 import Card from '../components/card';
 import styles from '../styles/Home.module.css';
 
-import coffeeStores from '../mocks/coffee-stores.json';
+import coffeeStoresData from '../mocks/coffee-stores.json';
 
-export default function Home() {
+export async function getStaticProps(context) {
+  console.log('hi getstaticprops');
+  return {
+    props: {
+      coffeeStores: coffeeStoresData,
+    }, // will be passed to the page component as props
+  };
+}
+
+export default function Home(props) {
+  const { coffeeStores } = props;
+
   const handleOnBannerClick = () => {
     console.log('you clicked on the banner!');
   };
@@ -33,17 +44,22 @@ export default function Home() {
             height={400}
           />
         </div>
-        <div className={styles.cardLayout}>
-          {coffeeStores.map((store) => (
-            <Card
-              key={store.id}
-              className={styles.card}
-              name={store.name}
-              href={`/coffee-store/${store.id}`}
-              imgUrl={store.imgUrl}
-            />
-          ))}
-        </div>
+        {coffeeStores.length > 0 && (
+          <>
+            <h2 className={styles.heading2}>Toronto Stores</h2>
+            <div className={styles.cardLayout}>
+              {coffeeStores.map((store) => (
+                <Card
+                  key={store.id}
+                  className={styles.card}
+                  name={store.name}
+                  href={`/coffee-store/${store.id}`}
+                  imgUrl={store.imgUrl}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </main>
     </div>
   );
