@@ -5,6 +5,8 @@ import Banner from '../components/banner';
 import Card from '../components/card';
 import styles from '../styles/Home.module.css';
 
+import coffeeStores from '../mocks/coffee-stores.json';
+
 export default function Home() {
   const handleOnBannerClick = () => {
     console.log('you clicked on the banner!');
@@ -31,11 +33,17 @@ export default function Home() {
             height={400}
           />
         </div>
-        <Card
-          name='DarkHorse'
-          href='/coffee-store/darkhorse-coffee'
-          imgUrl='/static/hero-image.png'
-        />
+        <div className={styles.cardLayout}>
+          {coffeeStores.map((store) => (
+            <Card
+              key={store.id}
+              className={styles.card}
+              name={store.name}
+              href={`/coffee-store/${store.id}`}
+              imgUrl={store.imgUrl}
+            />
+          ))}
+        </div>
       </main>
     </div>
   );
