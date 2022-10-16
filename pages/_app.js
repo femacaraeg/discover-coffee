@@ -7,7 +7,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <React.Fragment>
       <Component {...pageProps} />
-      <Footer />
+      {/* <Footer /> */}
     </React.Fragment>
   );
 }
