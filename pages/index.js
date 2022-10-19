@@ -5,13 +5,16 @@ import Banner from '../components/banner';
 import Card from '../components/card';
 import styles from '../styles/Home.module.css';
 
-import coffeeStoresData from '../mocks/coffee-stores.json';
+import { fetchCoffeeStores } from '../lib/coffee-stores';
 
 export async function getStaticProps(context) {
-  console.log('hi getstaticprops');
+  console.log('hi getStaticProps');
+
+  const coffeeStores = await fetchCoffeeStores();
+
   return {
     props: {
-      coffeeStores: coffeeStoresData,
+      coffeeStores,
     }, // will be passed to the page component as props
   };
 }
@@ -50,11 +53,14 @@ export default function Home(props) {
             <div className={styles.cardLayout}>
               {coffeeStores.map((store) => (
                 <Card
-                  key={store.id}
+                  key={store.fsq_id}
                   className={styles.card}
                   name={store.name}
-                  href={`/coffee-store/${store.id}`}
-                  imgUrl={store.imgUrl}
+                  href={`/coffee-store/${store.fsq_id}`}
+                  imgUrl={
+                    store.imgUrl ||
+                    'https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80'
+                  }
                 />
               ))}
             </div>
