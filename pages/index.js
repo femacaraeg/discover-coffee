@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 
@@ -9,6 +9,8 @@ import styles from '../styles/Home.module.css';
 import useTrackLocation from '../hooks/use-track-location';
 import { fetchCoffeeStores } from '../lib/coffee-stores';
 
+import { ACTION_TYPES, StoreContext } from './_app';
+
 export async function getStaticProps(context) {
   console.log('hi getStaticProps');
 
@@ -17,32 +19,30 @@ export async function getStaticProps(context) {
   return {
     props: {
       coffeeStores,
-    }, // will be passed to the page component as props
+    },
   };
 }
 
 export default function Home(props) {
-  // const { coffeeStores } = props;
+  const { dispatch, state } = useContext(StoreContext);
 
-  const [coffeeStores, setCoffeeStores] = useState('');
+  const { latLong, coffeeStores } = state;
+
   const [coffeeStoresError, setCoffeeStoresError] = useState(null);
 
-  const {
-    handleTrackLocation,
-    latLong,
-    locationErrorMessage,
-    isFindingLocation,
-  } = useTrackLocation();
-
-  console.log({ latLong, locationErrorMessage });
+  const { handleTrackLocation, locationErrorMessage, isFindingLocation } =
+    useTrackLocation();
 
   useEffect(() => {
     async function setCoffeeStoresByLocation() {
       if (latLong) {
         try {
           const fetchedCoffeeStores = await fetchCoffeeStores(latLong, 24);
-          console.log({ fetchedCoffeeStores });
-          setCoffeeStores(fetchedCoffeeStores);
+
+          dispatch({
+            type: ACTION_TYPES.SET_COFFEE_STORES,
+            payload: { coffeeStores: fetchedCoffeeStores },
+          });
         } catch (error) {
           console.log(error);
           setCoffeeStoresError(error.message);
@@ -51,7 +51,7 @@ export default function Home(props) {
     }
 
     setCoffeeStoresByLocation();
-  }, [latLong]);
+  }, [dispatch, latLong]);
 
   const handleOnBannerClick = () => {
     console.log('you clicked on the banner!');

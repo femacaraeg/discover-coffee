@@ -16,6 +16,7 @@ const useTrackLocation = () => {
       type: ACTION_TYPES.SET_LAT_LONG,
       payload: { latLong: `${latitude},${longitude}` },
     });
+
     setLocationErrorMessage('');
     setIsFindingLocation(false);
   };
@@ -38,7 +39,6 @@ const useTrackLocation = () => {
   };
 
   return {
-    // latLong,
     handleTrackLocation,
     locationErrorMessage,
     isFindingLocation,
