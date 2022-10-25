@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Head from 'next/head';
 import Image from 'next/image';
-
 import { fetchCoffeeStores } from '../../lib/coffee-stores';
 
 import styles from '../../styles/coffee-store.module.css';
@@ -13,8 +12,9 @@ export async function getStaticProps(staticProps) {
   const params = staticProps.params;
 
   const coffeeStores = await fetchCoffeeStores();
+
   const findCoffeeStoreById = coffeeStores.find((coffeeStore) => {
-    return coffeeStore.id.toString === params.storeId;
+    return coffeeStore.id.toString() === params.storeId;
   });
 
   return {
@@ -45,7 +45,6 @@ function CoffeeStore(props) {
 
   const { address, name, cross_street, imgUrl } = props.coffeeStore;
 
-  console.log(props);
   if (router.isFallback) {
     return <div>Loading...</div>;
   }
