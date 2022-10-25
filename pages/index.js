@@ -24,7 +24,7 @@ export async function getStaticProps(context) {
 export default function Home(props) {
   // const { coffeeStores } = props;
 
-  const [coffeeStores, setCoffeeStores] = useState([]);
+  const [coffeeStores, setCoffeeStores] = useState('');
   const [coffeeStoresError, setCoffeeStoresError] = useState(null);
 
   const {
@@ -45,7 +45,7 @@ export default function Home(props) {
           setCoffeeStores(fetchedCoffeeStores);
         } catch (error) {
           console.log(error);
-          setError(error.message);
+          setCoffeeStoresError(error.message);
         }
       }
     }
@@ -103,6 +103,7 @@ export default function Home(props) {
             </div>
           </div>
         )}
+
         <div className={styles.sectionWrapper}>
           {props.coffeeStores.length > 0 && (
             <>

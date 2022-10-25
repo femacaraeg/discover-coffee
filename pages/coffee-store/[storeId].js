@@ -5,10 +5,24 @@ import Link from 'next/link';
 import Head from 'next/head';
 import Image from 'next/image';
 
-import coffeeStoresData from '../../mocks/coffee-stores.json';
 import { fetchCoffeeStores } from '../../lib/coffee-stores';
 
 import styles from '../../styles/coffee-store.module.css';
+
+export async function getStaticProps(staticProps) {
+  const params = staticProps.params;
+
+  const coffeeStores = await fetchCoffeeStores();
+  const findCoffeeStoreById = coffeeStores.find((coffeeStore) => {
+    return coffeeStore.id.toString === params.storeId;
+  });
+
+  return {
+    props: {
+      coffeeStore: findCoffeeStoreById ? findCoffeeStoreById : {},
+    },
+  };
+}
 
 export async function getStaticPaths() {
   const coffeeStores = await fetchCoffeeStores();
@@ -21,31 +35,17 @@ export async function getStaticPaths() {
     };
   });
   return {
-    fallback: true,
+    fallback: false,
     paths,
-  };
-}
-
-export async function getStaticProps(staticProps) {
-  const params = staticProps.params;
-
-  const coffeeStores = await fetchCoffeeStores();
-
-  return {
-    props: {
-      coffeeStore: coffeeStores.find((store) => {
-        return store.id.toString() === params.storeId;
-      }),
-    },
   };
 }
 
 function CoffeeStore(props) {
   const router = useRouter();
-  const { storeId } = router.query;
 
   const { address, name, cross_street, imgUrl } = props.coffeeStore;
 
+  console.log(props);
   if (router.isFallback) {
     return <div>Loading...</div>;
   }
