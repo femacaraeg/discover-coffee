@@ -12,8 +12,6 @@ import { fetchCoffeeStores } from '../lib/coffee-stores';
 import { ACTION_TYPES, StoreContext } from './_app';
 
 export async function getStaticProps(context) {
-  console.log('hi getStaticProps');
-
   const coffeeStores = await fetchCoffeeStores();
 
   return {

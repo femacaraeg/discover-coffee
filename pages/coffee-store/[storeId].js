@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Head from 'next/head';
 import Image from 'next/image';
 import { fetchCoffeeStores } from '../../lib/coffee-stores';
+import { StoreContext } from '../_app';
+import { isEmpty } from '../../utils/';
 
 import styles from '../../styles/coffee-store.module.css';
 
@@ -34,24 +36,44 @@ export async function getStaticPaths() {
       },
     };
   });
+
   return {
-    fallback: false,
+    fallback: true,
     paths,
   };
 }
 
-function CoffeeStore(props) {
+function CoffeeStore(initialProps) {
   const router = useRouter();
 
-  const { address, name, cross_street, imgUrl } = props.coffeeStore;
+  const id = router.query.id;
 
-  if (router.isFallback) {
-    return <div>Loading...</div>;
-  }
+  const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore);
+
+  const { address, name, cross_street, imgUrl } = coffeeStore;
+
+  const {
+    state: { coffeeStores },
+  } = useContext(StoreContext);
+
+  useEffect(() => {
+    if (isEmpty(initialProps.coffeeStore)) {
+      if (coffeeStores.length > 0) {
+        const findCoffeeStoreById = coffeeStores.find((coffeeStore) => {
+          return coffeeStore.id.toString() === id;
+        });
+        setCoffeeStore(findCoffeeStoreById);
+      }
+    }
+  }, [id]);
 
   const handleUpvoteButton = () => {
     console.log('up vote');
   };
+
+  if (router.isFallback) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className={styles.layout}>
