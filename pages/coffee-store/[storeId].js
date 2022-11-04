@@ -46,23 +46,63 @@ export async function getStaticPaths() {
 function CoffeeStore(initialProps) {
   const router = useRouter();
 
-  const id = router.query.id;
+  const id = router.query.storeId;
 
   const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore);
 
-  const { address, name, cross_street, imgUrl } = coffeeStore;
+  const { address, name, cross_street, imgUrl, voting } = coffeeStore;
+
+  console.log(coffeeStore);
 
   const {
     state: { coffeeStores },
   } = useContext(StoreContext);
 
+  const handleCreateCoffeeStore = async (coffeeStore) => {
+    try {
+      const { id, name, voting, imgUrl, street, address } = coffeeStore;
+
+      console.log('creating db');
+      const response = await fetch('/api/createCoffeeStore', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id,
+          name,
+          voting: 0,
+          imgUrl,
+          street: street || '',
+          address: address || '',
+        }),
+      });
+
+      const dbCoffeeStore = await response.json();
+      console.log({ dbCoffeeStore });
+    } catch (error) {
+      console.error('Error creating coffee store', error);
+    }
+  };
+
   useEffect(() => {
+    console.log('step 1');
     if (isEmpty(initialProps.coffeeStore)) {
+      console.log('step 2');
+
       if (coffeeStores.length > 0) {
-        const findCoffeeStoreById = coffeeStores.find((coffeeStore) => {
+        console.log('step 3');
+
+        const coffeeStoreFromContext = coffeeStores.find((coffeeStore) => {
           return coffeeStore.id.toString() === id;
         });
-        setCoffeeStore(findCoffeeStoreById);
+
+        if (coffeeStoreFromContext) {
+          console.log('step 4');
+
+          setCoffeeStore(coffeeStoreFromContext);
+          handleCreateCoffeeStore(coffeeStoreFromContext);
+        }
       }
     }
   }, [id]);
@@ -130,7 +170,7 @@ function CoffeeStore(initialProps) {
               height='24'
               alt='location icon'
             />
-            <p className={styles.text}>1</p>
+            <p className={styles.text}>{voting}</p>
           </div>
           <button className={styles.upvoteButton} onClick={handleUpvoteButton}>
             Up vote!
