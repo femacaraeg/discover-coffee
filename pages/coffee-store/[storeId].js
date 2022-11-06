@@ -52,8 +52,6 @@ function CoffeeStore(initialProps) {
 
   const { address, name, cross_street, imgUrl, voting } = coffeeStore;
 
-  console.log(coffeeStore);
-
   const {
     state: { coffeeStores },
   } = useContext(StoreContext);
@@ -86,26 +84,22 @@ function CoffeeStore(initialProps) {
   };
 
   useEffect(() => {
-    console.log('step 1');
     if (isEmpty(initialProps.coffeeStore)) {
-      console.log('step 2');
-
       if (coffeeStores.length > 0) {
-        console.log('step 3');
-
         const coffeeStoreFromContext = coffeeStores.find((coffeeStore) => {
           return coffeeStore.id.toString() === id;
         });
 
         if (coffeeStoreFromContext) {
-          console.log('step 4');
-
           setCoffeeStore(coffeeStoreFromContext);
           handleCreateCoffeeStore(coffeeStoreFromContext);
         }
       }
+    } else {
+      // SSG
+      handleCreateCoffeeStore(initialProps.coffeeStore);
     }
-  }, [id]);
+  }, [id, initialProps.coffeeStore]);
 
   const handleUpvoteButton = () => {
     console.log('up vote');
