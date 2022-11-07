@@ -60,7 +60,6 @@ function CoffeeStore(initialProps) {
     try {
       const { id, name, voting, imgUrl, street, address } = coffeeStore;
 
-      console.log('creating db');
       const response = await fetch('/api/createCoffeeStore', {
         method: 'POST',
         headers: {
@@ -101,8 +100,13 @@ function CoffeeStore(initialProps) {
     }
   }, [id, initialProps.coffeeStore]);
 
+  const [votingCount, setVotingCount] = useState(1);
+
   const handleUpvoteButton = () => {
     console.log('up vote');
+    let count = votingCount + 1;
+    setVotingCount(count);
+    // update voting value in airtable.
   };
 
   if (router.isFallback) {
@@ -164,7 +168,7 @@ function CoffeeStore(initialProps) {
               height='24'
               alt='location icon'
             />
-            <p className={styles.text}>{voting}</p>
+            <p className={styles.text}>{votingCount}</p>
           </div>
           <button className={styles.upvoteButton} onClick={handleUpvoteButton}>
             Up vote!
