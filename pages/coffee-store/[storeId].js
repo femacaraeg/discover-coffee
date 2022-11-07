@@ -6,7 +6,9 @@ import Head from 'next/head';
 import Image from 'next/image';
 import { fetchCoffeeStores } from '../../lib/coffee-stores';
 import { StoreContext } from '../../store/store-context';
-import { isEmpty } from '../../utils/';
+import { fetcher, isEmpty } from '../../utils/';
+
+import useSWR from 'swr';
 
 import styles from '../../styles/coffee-store.module.css';
 
@@ -50,7 +52,7 @@ function CoffeeStore(initialProps) {
 
   const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore);
 
-  const { address, name, cross_street, imgUrl, voting } = coffeeStore;
+  const { address, name, cross_street, imgUrl } = coffeeStore;
 
   const {
     state: { coffeeStores },
@@ -102,12 +104,26 @@ function CoffeeStore(initialProps) {
 
   const [votingCount, setVotingCount] = useState(1);
 
+  const { data, error } = useSWR(`/api/getCoffeeStoreById?id=${id}`, fetcher);
+
+  useEffect(() => {
+    if (data && data.length > 0) {
+      console.log('data from SWR', data);
+      setCoffeeStore(data[0]);
+      setVotingCount(data[0].voting);
+    }
+  }, [data]);
+
   const handleUpvoteButton = () => {
-    console.log('up vote');
+    console.log('up vote', votingCount);
     let count = votingCount + 1;
     setVotingCount(count);
     // update voting value in airtable.
   };
+
+  if (error) {
+    return <div>Something went wrong retrieving store.</div>;
+  }
 
   if (router.isFallback) {
     return <div>Loading...</div>;
