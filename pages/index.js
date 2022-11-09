@@ -57,7 +57,6 @@ export default function Home(props) {
   }, [dispatch, latLong]);
 
   const handleOnBannerClick = () => {
-    console.log('you clicked on the banner!');
     handleTrackLocation();
   };
 

@@ -52,7 +52,7 @@ function CoffeeStore(initialProps) {
 
   const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore);
 
-  const { address, name, cross_street, imgUrl } = coffeeStore;
+  const { address = '', name = '', street = '', imgUrl = '' } = coffeeStore;
 
   const {
     state: { coffeeStores },
@@ -78,7 +78,6 @@ function CoffeeStore(initialProps) {
       });
 
       const dbCoffeeStore = await response.json();
-      console.log({ dbCoffeeStore });
     } catch (error) {
       console.error('Error creating coffee store', error);
     }
@@ -104,21 +103,38 @@ function CoffeeStore(initialProps) {
 
   const [votingCount, setVotingCount] = useState(1);
 
-  const { data, error } = useSWR(`/api/getCoffeeStoreById?id=${id}`, fetcher);
+  const { data, error } = useSWR(`/api/getCoffeeStoreById?id=${id}`, fetcher, {
+    refreshInterval: 1000,
+  });
 
   useEffect(() => {
     if (data && data.length > 0) {
-      console.log('data from SWR', data);
       setCoffeeStore(data[0]);
       setVotingCount(data[0].voting);
     }
   }, [data]);
 
-  const handleUpvoteButton = () => {
-    console.log('up vote', votingCount);
-    let count = votingCount + 1;
-    setVotingCount(count);
-    // update voting value in airtable.
+  const handleUpvoteButton = async () => {
+    try {
+      const response = await fetch('/api/favouriteCoffeeStoreById', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id,
+        }),
+      });
+
+      const dbCoffeeStore = await response.json();
+
+      if (dbCoffeeStore && dbCoffeeStore.length > 0) {
+        let count = votingCount + 1;
+        setVotingCount(count);
+      }
+    } catch (error) {
+      console.error('Error upvoting the coffee store', err);
+    }
   };
 
   if (error) {
@@ -175,7 +191,7 @@ function CoffeeStore(initialProps) {
               height='24'
               alt='location icon'
             />
-            <p className={styles.text}>{cross_street}</p>
+            <p className={styles.text}>{street}</p>
           </div>
           <div className={styles.iconWrapper}>
             <Image
