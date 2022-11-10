@@ -50,7 +50,9 @@ function CoffeeStore(initialProps) {
 
   const id = router.query.storeId;
 
-  const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore);
+  const [coffeeStore, setCoffeeStore] = useState(
+    initialProps.coffeeStore || {}
+  );
 
   const { address = '', name = '', street = '', imgUrl = '' } = coffeeStore;
 
