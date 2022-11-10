@@ -99,7 +99,7 @@ function CoffeeStore(initialProps) {
       // SSG
       handleCreateCoffeeStore(initialProps.coffeeStore);
     }
-  }, [id, initialProps.coffeeStore]);
+  }, [id, initialProps.coffeeStore, coffeeStores]);
 
   const [votingCount, setVotingCount] = useState(0);
 
